@@ -4,14 +4,14 @@ import LockableDie
 
 class Poker : Combination {
 
-    var score: Int = 0
+    private var score: Int = 0
 
     override fun checkCombination(dice: List<LockableDie>): Int {
         var cnt1 = 0
         var cnt2 = 0
         val first = dice[0].number
         for(die: LockableDie in dice){
-            if(!die.locked){
+            if(die.locked){
                 if(die.number == first){
                     cnt1++
                 }

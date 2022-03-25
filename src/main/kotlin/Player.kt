@@ -1,12 +1,9 @@
 import combinations.Category
-import combinations.Poker
-import combinations.Scale
-import combinations.Yahtzee
 import kotlin.random.Random
 
 class Player {
     var dice = List(6) { LockableDie()}
-    private lateinit var card : Card
+    var card = Card()
 
 
     fun rollDice(){
@@ -39,26 +36,12 @@ class Player {
         }
     }
 
-    fun chooseCombination(number: Int): Int{
-        var score = 0
-        when (number) {
-            1 -> {
-                val poker = Poker()
-                score = poker.checkCombination(dice)
-                card.writeScore(Category.POKER, score)
-            }
-            2 -> {
-                val scale = Scale()
-                score = scale.checkCombination(dice)
-                card.writeScore(Category.SCALE, score)
-            }
-            3 -> {
-                val yahtzee = Yahtzee()
-                score = yahtzee.checkCombination(dice)
-                card.writeScore(Category.YAHTZEE, score)
-            }
-        }
-        return score
+    fun writePoints(category: Category): Boolean {
+        return if (!card.containsCategory(category)) {
+            val score = category.combination.checkCombination(dice)
+            card.writeScore(category, score)
+            true
+        } else false
     }
 
 

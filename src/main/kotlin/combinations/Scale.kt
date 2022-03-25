@@ -4,7 +4,7 @@ import LockableDie
 
 class Scale : Combination {
 
-    var score: Int = 0
+    private var score: Int = 0
 
     override fun checkCombination(dice: List<LockableDie>): Int {
         var cnt1 = 0
@@ -15,23 +15,23 @@ class Scale : Combination {
         var cnt6 = 0
 
         for (die: LockableDie in dice){
-            if(!die.locked){
-                if(die.number == cnt1){
+            if(die.locked){
+                if(die.number == 1){
                     cnt1++
                 }
-                if(die.number == cnt2){
+                if(die.number == 2){
                     cnt2++
                 }
-                if(die.number == cnt3){
+                if(die.number == 3){
                     cnt3++
                 }
-                if(die.number == cnt4){
+                if(die.number == 4){
                     cnt4++
                 }
-                if(die.number == cnt5){
+                if(die.number == 5){
                     cnt5++
                 }
-                if(die.number == cnt6){
+                if(die.number == 6){
                     cnt6++
                 }
             }

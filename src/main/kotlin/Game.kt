@@ -1,61 +1,62 @@
-import combinations.Combination
-import combinations.Poker
-import combinations.Scale
-import combinations.Yahtzee
+import combinations.*
 
 class Game {
 
-    private var players = List(2){Player()}
-    private var throwCounter : Int = 0
-    private var combinations : List<Combination> = listOf(Poker(), Scale(), Yahtzee())
+    private var player = Player()
 
-    fun throws(){
-        throwCounter++
-        players[0].rollDice()
-        val dice : List<LockableDie> = players[0].dice
-        printDice(dice)
-
+    private fun lock(){
         println("Write index of dice you would like to lock (0 if none): ")
         val lockedStrings = readln()
         val lockedIndices = lockedStrings.split(' ').map { it.toInt() }.toMutableList()
         if(lockedIndices[0] != 0){
-            players[0].lockDice(lockedIndices.map { it - 1 })
-            println("Locked numbers: ${players[0].getLockedDiceNumbers()}")
+            player.lockDice(lockedIndices.map { it - 1 })
+            println("Locked numbers: ${player.getLockedDiceNumbers()}")
         }
-        printDice(dice)
+    }
+
+    private fun unlock(){
         println("Write index of dice you would like to unlock (0 if none): ")
         val unlockedStrings = readln()
         val unlockedIndices = unlockedStrings.split(' ').map { it.toInt() }
         if(unlockedIndices[0] != 0){
-            players[0].unlockDice(unlockedIndices.map { it - 1 })
-        }
-        /*
-        unlockedIndices.forEach { number ->
-            if(lockedIndices.contains(number)){
-                lockedIndices.remove(number)
-            }
-        */
-        println("Locked numbers: ${players[0].getLockedDiceNumbers()}")
-        println("Write 1 to throw again or 0 to choose a combination: ")
-        }
-
-    fun play(){
-        println("PLAYER 1")
-        println("Press enter to play: ")
-        readln()
-        repeat(3){
-            throws()
-            val decision = readln()
-            when (decision) {
-                "0" -> {
-                    getCombination()
-                    return@repeat
-                }
-            }
+            player.unlockDice(unlockedIndices.map { it - 1 })
         }
     }
 
-    fun printDice(dice: List<LockableDie>){
+    private fun throws(){
+        player.rollDice()
+        val dice : List<LockableDie> = player.dice
+        printDice(dice)
+        lock()
+        printDice(dice)
+        unlock()
+        println("Locked numbers: ${player.getLockedDiceNumbers()}")
+        }
+
+    fun play(){
+        println("Press enter to play: ")
+        readln()
+        while(player.card.points.size < 3) {
+            for (i in 0 until 3) {
+                throws()
+                if (i == 2) {
+                    println("Write 0 to choose a combination: ")
+                } else {
+                    println("Write 1 to throw again or 0 to choose a combination: ")
+                }
+                when (readln()) {
+                    "0" -> {
+                        getCombination()
+                        player.unlockDice(listOf(0,1,2,3,4,5))
+                        break
+                    }
+                }
+            }
+        }
+        println(player.card.points)
+    }
+
+    private fun printDice(dice: List<LockableDie>){
         println(dice.joinToString {
             if (it.locked) {
                 "{" + it.number.toString() + "}"
@@ -65,7 +66,26 @@ class Game {
         })
     }
 
-    fun getCombination(){
+    private fun getCombination(){
+        var written = false
+        while (!written) {
+            println("1. Poker \n2. Scale \n3. Yahtzee \n")
+            println("Write a number of the wanted combination: ")
+
+            val category = when (readln().toInt()) {
+                1 -> Category.POKER
+                2 -> Category.SCALE
+                3 -> Category.YAHTZEE
+                else -> continue
+            }
+
+            written = player.writePoints(category)
+            if (written) {
+                val points = player.card.getPoints(category)
+                println("Points earned: $points")
+            }
+        }
+
 
     }
 }

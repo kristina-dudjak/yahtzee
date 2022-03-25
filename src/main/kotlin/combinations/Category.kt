@@ -1,5 +1,7 @@
 package combinations
 
-enum class Category {
-    POKER, SCALE, YAHTZEE
+enum class Category(
+    val combination: Combination
+) {
+    POKER(Poker()), SCALE(Scale()), YAHTZEE(Yahtzee())
 }
